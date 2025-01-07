@@ -1,0 +1,460 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ko">
+<head>
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<title>엘소드 소트</title>
+<script type="text/javascript">
+
+    // 이미지 파일 이름 배열
+    const imageFiles = [
+        '나이트 엠퍼러',
+        '노바 임퍼레이터',
+        '니샤 라비린스',
+        '닉스 피에타',
+        '대라',
+        '데메르시오(니힐리다)',
+        '데메르시오(티란누스)',
+        '데이브레이커',
+        '도미네이터',
+        '둠 브링어',
+        '디앙겔리온(아눌라르)',
+        '디앙겔리온(이블리스)',
+        '디우스 아에르',
+        '라디언트 소울',
+        '레버넌트',
+        '레이지 하츠',
+        '로드 아조트',
+        '룬 마스터',
+        '리버레이터',
+        '리히터',
+        '매드 패러독스',
+        '메타모르피',
+        '모르페우스',
+        '미네르바',
+        '미스치프',
+        '범황',
+        '블랙 매서커',
+        '블러디 퀸',
+        '블루헨',
+        '비고트',
+        '비천',
+        '센츄리온',
+        '셀레스티아',
+        '아네모스',
+        '아드레스티아',
+        '아클리스',
+        '애버리스',
+        '에테르 세이지',
+        '엠파이어 소드',
+        '오버마인드',
+        '오즈 소서러',
+        '이노센트(슈발리에)',
+        '이노센트(이슈타르)',
+        '이터니티 위너',
+        '일천',
+        '임모탈',
+        '제네시스',
+        '젬블리스',
+        '카타스트로피(어비셔)',
+        '카타스트로피(티모리아)',
+        '코드 사리엘',
+        '코드 안티테제',
+        '코드 얼티메이트',
+        '코드 에센시아',
+        '코멧 크루세이더',
+        '템페스트 버스터',
+        '트와일라잇',
+        '트윈즈 피카로',
+        '페이탈 팬텀',
+        '퓨리어스 블레이드',
+        '프라임 오퍼레이터',
+        '프로피티스',
+        '플레임 로드',
+        '헤르셔'
+        // 추가 이미지 파일 이름을 여기에 추가
+    ];
+
+    var namMember = imageFiles.map(file => {
+        return (
+            "<div class='image-container'>" +
+            "<img src='/images/" + file + ".png'> " +
+            "</div>" +
+            "<br>" + file
+        );
+    });
+//*********************************************************
+
+var lstMember = new Array();
+var parent = new Array();
+var equal = new Array();
+var rec = new Array();
+var cmp1,cmp2;
+var head1,head2;
+var nrec;
+
+var numQuestion;
+var totalSize;
+var finishSize;
+var finishFlag;
+
+//変数の初期化+++++++++++++++++++++++++++++++++++++++++++++
+function initList(){
+var n = 0;
+var mid;
+var i;
+
+//??トすべき配列
+lstMember[n] = new Array();
+for (i=0; i<namMember.length; i++) {
+lstMember[n][i] = i;
+}
+parent[n] = -1;
+totalSize = 0;
+n++;
+
+for (i=0; i<lstMember.length; i++) {
+//要素数が２以上なら２分割し、
+//分割された配列をlstMemberの最後に加える
+if(lstMember[i].length>=2) {
+mid = Math.ceil(lstMember[i].length/2);
+lstMember[n] = new Array();
+lstMember[n] = lstMember[i].slice(0,mid);
+totalSize += lstMember[n].length;
+parent[n] = i;
+n++;
+lstMember[n] = new Array();
+lstMember[n] = lstMember[i].slice(mid,lstMember[i].length);
+totalSize += lstMember[n].length;
+parent[n] = i;
+n++;
+}
+}
+
+//保存用配列
+for (i=0; i<namMember.length; i++) {
+rec[i] = 0;
+}
+nrec = 0;
+
+//引き分けの結果を保存するリスト
+//キ?：リンク始?の値
+// 値 ：リンク終?の値
+for (i=0; i<=namMember.length; i++) {
+equal[i] = -1;
+}
+
+cmp1 = lstMember.length-2;
+cmp2 = lstMember.length-1;
+head1 = 0;
+head2 = 0;
+numQuestion = 1;
+finishSize = 0;
+finishFlag = 0;
+}
+
+//リストの??ト+++++++++++++++++++++++++++++++++++++++++++
+//flag：比較結果
+//  -1：左を選択
+//   0：引き分け
+//   1：右を選択
+function sortList(flag){
+var i;
+var str;
+
+//recに保存
+if (flag<0) {
+rec[nrec] = lstMember[cmp1][head1];
+head1++;
+nrec++;
+finishSize++;
+while (equal[rec[nrec-1]]!=-1) {
+rec[nrec] = lstMember[cmp1][head1];
+head1++;
+nrec++;
+finishSize++;
+}
+}
+else if (flag>0) {
+rec[nrec] = lstMember[cmp2][head2];
+head2++;
+nrec++;
+finishSize++;
+while (equal[rec[nrec-1]]!=-1) {
+rec[nrec] = lstMember[cmp2][head2];
+head2++;
+nrec++;
+finishSize++;
+}
+}
+else {
+rec[nrec] = lstMember[cmp1][head1];
+head1++;
+nrec++;
+finishSize++;
+while (equal[rec[nrec-1]]!=-1) {
+rec[nrec] = lstMember[cmp1][head1];
+head1++;
+nrec++;
+finishSize++;
+}
+equal[rec[nrec-1]] = lstMember[cmp2][head2];
+rec[nrec] = lstMember[cmp2][head2];
+head2++;
+nrec++;
+finishSize++;
+while (equal[rec[nrec-1]]!=-1) {
+rec[nrec] = lstMember[cmp2][head2];
+head2++;
+nrec++;
+finishSize++;
+}
+}
+
+//片方のリストを走査し終えた後の処理
+if (head1<lstMember[cmp1].length && head2==lstMember[cmp2].length) {
+//リストcmp2が走査済 - リストcmp1の残りをコピ?
+while (head1<lstMember[cmp1].length){
+rec[nrec] = lstMember[cmp1][head1];
+head1++;
+nrec++;
+finishSize++;
+}
+}
+else if (head1==lstMember[cmp1].length && head2<lstMember[cmp2].length) {
+//リストcmp1が走査済 - リストcmp2の残りをコピ?
+while (head2<lstMember[cmp2].length){
+rec[nrec] = lstMember[cmp2][head2];
+head2++;
+nrec++;
+finishSize++;
+}
+}
+
+//両方のリストの最後に到達した場合は
+//親リストを更新する
+if (head1==lstMember[cmp1].length && head2==lstMember[cmp2].length) {
+for (i=0; i<lstMember[cmp1].length+lstMember[cmp2].length; i++) {
+lstMember[parent[cmp1]][i] = rec[i];
+}
+lstMember.pop();
+lstMember.pop();
+cmp1 = cmp1-2;
+cmp2 = cmp2-2;
+head1 = 0;
+head2 = 0;
+
+//新しい比較を行う前にrecを初期化
+if (head1==0 && head2==0) {
+for (i=0; i<namMember.length; i++) {
+rec[i] = 0;
+}
+nrec = 0;
+}
+}
+
+if (cmp1<0) {
+str = "Battle No."+(numQuestion-1)+"<br>"+Math.floor(finishSize*100/totalSize)+"% sorted.";
+document.getElementById("battleNumber").innerHTML = str;
+
+showResult();
+finishFlag = 1;
+}
+else {
+showImage();
+}
+}
+
+//結果の?示+++++++++++++++++++++++++++++++++++++++++++++++
+function showResult() {
+var ranking = 1;
+var sameRank = 1;
+var str = "";
+var i;
+
+str += "<table style=\"width:200px; font-size:12px; line-height:120%; margin-left:auto; margin-right:auto; border:1px solid #000; border-collapse:collapse\" align=\"center\">";
+str += "<tr><td style=\"font-family: NEXONGothic; color:#ffffff; background-color:#000; text-align:center;\">순위<\/td><td style=\"font-family: NEXONGothic; color:#ffffff; background-color:#000; text-align:center;\">이름<\/td><\/tr>";
+
+for (i=0; i<namMember.length; i++) {
+str += "<tr><td style=\"font-family: NEXONGothic; border:1px solid #000; text-align:right; padding-right:5px;\">"+ranking+"<\/td><td style=\"border:1px solid #000; padding-left:5px;\">"+namMember[lstMember[0][i]]+"<\/td><\/tr>";
+if (i<namMember.length-1) {
+if (equal[lstMember[0][i]]==lstMember[0][i+1]) {
+sameRank++;
+} else {
+ranking += sameRank;
+sameRank = 1;
+}
+}
+}
+str += "<\/table>";
+
+document.getElementById("resultField").innerHTML = str;
+}
+
+//比較する２つ要素の?示+++++++++++++++++++++++++++++++++++
+function showImage() {
+    var str0 = "Battle No."+numQuestion+"<br>"+Math.floor(finishSize*100/totalSize)+"% sorted.";
+    var str1 = ""+toNameFace(lstMember[cmp1][head1]);
+    var str2 = ""+toNameFace(lstMember[cmp2][head2]);
+
+    document.getElementById("battleNumber").innerHTML = str0;
+    document.getElementById("leftField").innerHTML = str1;
+    document.getElementById("rightField").innerHTML = str2;
+
+    numQuestion++;
+}
+
+//数値を名前（顔文字）に変換+++++++++++++++++++++++++++++++
+function toNameFace(n){
+var str = namMember[n];
+
+//顔文字を追加する場合は以下のコメントアウトを外す
+//namMemberのインデックスと矛盾しないように注意
+/*
+str += "<br>────<br>";
+switch(n) {
+//case -1 はサンプルなので削除すること
+case -1: str+="（ ´∀｀）";break;
+default: str+=""+n;
+}
+*/
+return str;
+}
+//-->
+</script>
+<style type="text/css">
+    @font-face {
+        font-family: 'NEXONGothic'; /* 폰트 이름 */
+        src: url('font/NEXON Lv1 Gothic Low OTF.otf') format('opentype'),
+        url('font/NEXON Lv1 Gothic Low OTF Bold.otf') format('opentype'),
+        url('font/NEXON Lv1 Gothic Low OTF Light.otf') format('opentype');
+        font-weight: normal; /* 폰트 굵기 */
+        font-style: normal;  /* 폰트 스타일 */
+    }
+
+    .image-container {
+        width: 285px ; /* 고정 너비 */
+        height: 425px; /* 고정 높이 */
+        overflow: hidden; /* 넘치는 부분 잘라내기 */
+        position: relative; /* 자식 요소의 위치 조정 */
+    }
+
+    .image-container img {
+        width: 100%; /* 너비를 100%로 설정하여 줄이기 */
+        height: auto; /* 비율에 맞게 높이를 자동 조정 */
+        display: block; /* 이미지의 기본 여백 제거 */
+    }
+
+    .image-container:hover img {
+        cursor: pointer;
+    }
+
+    #mainTable{
+        font-size: 12px;
+        font-family: NEXONGothic;
+        text-align: center;
+        vertical-align: middle;
+        width: 410px;
+        margin-left: auto;
+        margin-right: auto;
+        border-collapse: separate;
+        border-spacing: 10px 5px;
+    }
+
+    #leftField{
+        border: 0px solid #000;
+    }
+
+    #rightField{
+        border: 0px solid #000;
+    }
+
+    .middleField{
+        display: flex;
+        width: 120px;
+        height: 40px;
+        border-radius: 10px;
+        background-color: white;
+        font-family: NEXONGothic;
+        border: 0.5px solid gray;
+        border-color: gray;
+        justify-content: center;
+        align-items: center;
+    }
+    .middleField:hover{
+        color: aliceblue;
+        background-color: #93AB9D;
+        cursor: pointer;
+    }
+
+    .mainCol{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+    .mainCol.middle{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mainCol.item{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 12pt;
+        font-weight: bold;
+    }
+<!--
+A{
+  text-decoration : none;
+}
+-->
+<!--
+a:hover{color:#99ccff;}
+-->
+</style>
+<meta name="generator" content="Namo WebEditor(Trial)">
+<meta http-equiv="content-type" content="text/html; charset=utf-8"></head>
+
+<body text="#000000" bgcolor="#E5E3E4" link="#0099ff" vlink="#0099ff" alink="#0099ff">
+<div id="battleNumber" colspan="3" style="padding-bottom: 10px;">
+    <p>&nbsp;</p>
+</div>
+
+<div class="mainCol" id="mainTable" align="center">
+    <div class="mainCol item" id="leftField" onClick="if(finishFlag==0)sortList(-1);">
+    </div>
+    <div class="mainCol middle">
+        <div style="padding: 40px">
+            <img style="width: 120px; rotate: 50deg" src="https://cdn.discordapp.com/attachments/1119253545779212414/1326222783767908392/img_char2.png?ex=677ea4b7&is=677d5337&hm=0debc26b30cffd01d229d8cb6d0fae621733af16ffc45aa56af0b96cbc23c4d4&" alt="헤지호그">
+        </div>
+        <div class="middleField" onClick="if(finishFlag==0)sortList(0);">
+            둘 다 좋다
+        </div>
+        <div class="middleField" onClick="if(finishFlag==0)sortList(0);">
+            모르겠다
+        </div>
+    </div>
+    <div class="mainCol item" id="rightField" onClick="if(finishFlag==0)sortList(1);">
+    </div>
+</div>
+
+<div id="resultField" style="text-align:center; margin-top: 100px">
+    <p><font size="2" face="NEXONGothic"><span style="">셀레 취업시켜주세요</span></font></p>
+    <p><font size="2" face="NEXONGothic">프피도요...</font></p>
+
+</div>
+<script type="text/javascript">
+
+initList();
+showImage();
+
+</script>
+
+</body>
+</html>
